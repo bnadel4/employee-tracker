@@ -1,22 +1,18 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 const mysql = require('mysql2');
-const fs = require('fs');
+const query = require('./query');
+const connection = require('./config/connection');
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  port: 3306,
-  user: 'root',
-  password: '12345678', 
-  database: 'employee_tracker',
-});
+// console.log('query', query.viewDepartments());
 
-connection.connect((err) => {
-  if (err) {
-    console.log('ERROR ', err);
-  }
-  console.log('You are connected');
-});
+
+// connection.connect((err) => {
+//   if (err) {
+//     console.log('ERROR ', err);
+//   }
+//   console.log('You are connected');
+// });
 
 function runCode() {
   const questions = [
@@ -34,13 +30,26 @@ function runCode() {
         'update an employee role'
       ]
     }
-    
-  ]
+  ];
+  
+  const runQuery = async function (response) {
+    switch (response.option) {
+      case "view all departments":
+        await query.viewDepartments();
+        break;
+      case "view all roles":
+        await query.viewRoles();
+        break;
+      case "view all employees":
+        await query.viewEmployees();
+        break;
+    }
+  };
 
   inquirer.prompt(questions)
     .then((answers) => {
     console.log('answers', answers.option);
-    processAnswers(answers);
+    runCode(answers);
   })
 };
 
