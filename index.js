@@ -1,18 +1,5 @@
 const inquirer = require('inquirer');
-const cTable = require('console.table');
-const mysql = require('mysql2');
 const query = require('./query');
-const connection = require('./config/connection');
-
-// console.log('query', query.viewDepartments());
-
-
-// connection.connect((err) => {
-//   if (err) {
-//     console.log('ERROR ', err);
-//   }
-//   console.log('You are connected');
-// });
 
 function runCode() {
   const questions = [
@@ -32,16 +19,16 @@ function runCode() {
     }
   ];
   
-  const runQuery = async function (response) {
+  const runQuery = function (response) {
     switch (response.option) {
       case "view all departments":
-        await query.viewDepartments();
+        query.viewDepartment();
         break;
       case "view all roles":
-        await query.viewRoles();
+        query.viewRole();
         break;
       case "view all employees":
-        await query.viewEmployees();
+        query.viewEmployee();
         break;
     }
   };
@@ -49,7 +36,7 @@ function runCode() {
   inquirer.prompt(questions)
     .then((answers) => {
     console.log('answers', answers.option);
-    runCode(answers);
+    runQuery(answers);
   })
 };
 
