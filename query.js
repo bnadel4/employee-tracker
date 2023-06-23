@@ -24,5 +24,14 @@ Query.viewEmployee = function () {
    });
 };
 
+Query.addDepartment = function (newDepartmentName) {
+  console.log('newDepartmentName', newDepartmentName);
+  connection.query(`INSERT INTO department (name) 
+    VALUES ("${newDepartmentName}");`, function (error, department) {
+    if (error) throw error;
+    console.log(`${newDepartmentName} has been added to the department table.`);
+    Query.viewDepartment();
+   });
+};
 
 module.exports = Query;
