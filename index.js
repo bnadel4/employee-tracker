@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const query = require('./query');
+let departments = [];
 
 function runCode() {
   const questions = [
@@ -23,14 +24,42 @@ function runCode() {
       {
         type: 'input',
         name: 'newDepartmentName',
-        message: 'Enter a new department name.'
+        message: 'What is the name of the department?'
       },
     ];
+//WHEN I choose to add a role 
+// THEN I am prompted to enter the name, salary, and department already exists in database
+// for the role and that role is added to the database
+    const addRole = [
+      {
+        type: 'input',
+        name: 'newRoleTitle',
+        message: 'What is the name of the role?'
+      },
+      {
+        type: 'input',
+        name: 'newRoleSalary',
+        message: 'What is the salary of the role?'
+      },
+      {
+        type: 'list',
+        name: 'newRoleDepartment',
+        message: 'Which department does the role belong to?',
+        choices: [],
+      },
+    ];
+
+   async function getDepartments() {
+    let result = await query.viewDepartment();
+    addRole[2].choices = result.map(result => result.name);
+    return result;
+  }
   
-  const runQuery = function (response) {
+  const runQuery = async function (response) {
     switch (response.choice) {
       case 'view all departments':
-        query.viewDepartment();
+      let department = await query.viewDepartment();
+      console.table(department);
         break;
       case 'view all roles':
         query.viewRole();
@@ -44,12 +73,19 @@ function runCode() {
             query.addDepartment(answers.newDepartmentName);
           });
         break;
+      case 'add a role':
+       let result = await getDepartments();
+        inquirer.prompt(addRole)
+          .then((answers) => {
+            query.addRole(answers, result);
+          });
+        break;
     }
   };
 
   inquirer.prompt(questions)
     .then((answers) => {
-    console.log('answers', answers.choice);
+    ('answers', answers.choice);
     runQuery(answers);
   });
 };
