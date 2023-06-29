@@ -1,6 +1,5 @@
 const inquirer = require('inquirer');
 const query = require('./query');
-let departments = [];
 
 function runCode() {
   const questions = [
@@ -27,9 +26,7 @@ function runCode() {
         message: 'What is the name of the department?'
       },
     ];
-//WHEN I choose to add a role 
-// THEN I am prompted to enter the name, salary, and department already exists in database
-// for the role and that role is added to the database
+
     const addRole = [
       {
         type: 'input',
@@ -49,11 +46,30 @@ function runCode() {
       },
     ];
 
-   async function getDepartments() {
-    let result = await query.viewDepartment();
-    addRole[2].choices = result.map(result => result.name);
-    return result;
-  }
+    const addEmployee = [
+      {
+        type: 'input',
+        name: 'newEmployeeFirstName',
+        message: 'What is the employees first name?'
+      },
+      {
+        type: 'input',
+        name: 'newEmployeeLastName',
+        message: 'What is the employees last name?'
+      },
+      {
+        type: 'list',
+        name: 'newEmployeeRole',
+        message: 'What is the employees role?',
+        choices: [],
+      },
+      {
+        type: 'list',
+        name: 'newEmployeeManager',
+        message: 'Who is the employees manager?',
+        choices: [],
+      },
+    ];
   
   const runQuery = async function (response) {
     switch (response.choice) {
@@ -62,24 +78,43 @@ function runCode() {
       console.table(department);
         break;
       case 'view all roles':
-        query.viewRole();
+        let role = await query.viewRole();
+        console.table(role);
         break;
       case 'view all employees':
-        query.viewEmployee();
+       let employees = await query.viewEmployee();
+        console.table(employees);
         break;
       case 'add a department':
         inquirer.prompt(addDepartmentName)
-          .then((answers) => {
+          .then(async(answers) => {
             query.addDepartment(answers.newDepartmentName);
+            let updatedDepartments = await query.viewDepartment();
+            console.table(updatedDepartments);
           });
         break;
       case 'add a role':
-       let result = await getDepartments();
+       let resultDept = await query.viewDepartment();
+       addRole[2].choices = resultDept.map(result => result.name);
         inquirer.prompt(addRole)
-          .then((answers) => {
-            query.addRole(answers, result);
+          .then(async(answers) => {
+            query.addRole(answers, resultDept);
+            let updatedRoles = await query.viewRole();
+            console.table(updatedRoles);
           });
         break;
+      case 'add an employee':
+        let result = await query.viewEmployee();
+        addEmployee[2].choices = result.map(result => result.title); // display roles
+        addEmployee[3].choices = result.map(result => result.manager).filter(value => value); // display managers
+        addEmployee[3].choices.push('None');
+        inquirer.prompt(addEmployee)
+          .then(async(answers) => {
+            query.addEmployee(answers);
+            let updatedEmployees = await query.viewEmployee();
+            console.table(updatedEmployees);
+          });
+        break; 
     }
   };
 
