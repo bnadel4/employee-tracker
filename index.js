@@ -105,18 +105,24 @@ function runCode() {
         break;
       case 'add an employee':
         let result = await query.viewEmployee();
-        addEmployee[2].choices = result.map(result => result.title); // display roles
-        addEmployee[3].choices = result.map(result => result.manager).filter(value => value); // display managers
+        let roleResult = await query.viewRole();
+
+        addEmployee[2].choices = roleResult.map(result => result.title); // display roles
+        addEmployee[3].choices = [...new Set(result.map(result => result.manager).filter(value => value))]; // display managers
         addEmployee[3].choices.push('None');
         inquirer.prompt(addEmployee)
           .then(async(answers) => {
-            query.addEmployee(answers);
+            query.addEmployee(answers, roleResult);
             let updatedEmployees = await query.viewEmployee();
             console.table(updatedEmployees);
           });
         break; 
     }
   };
+
+  // add employee function
+  
+  
 
   inquirer.prompt(questions)
     .then((answers) => {

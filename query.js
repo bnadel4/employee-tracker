@@ -76,17 +76,15 @@ Query.addRole = async function ({newRoleTitle, newRoleSalary, newRoleDepartment}
   });
 };
 
-Query.addEmployee = async function ({newEmployeeFirstName, newEmployeeLastName, newEmployeeRole, newEmployeeManager}) {
-  const roleData = await Query.viewRole();
-  const roleId = roleData.find(value => value.title === newEmployeeRole).id;
+Query.addEmployee = async function ({newEmployeeFirstName, newEmployeeLastName, newEmployeeRole, newEmployeeManager}, roleResult) {
+  const roleId = roleResult.find(value => value.title === newEmployeeRole).id;
 
   const splitManagerName = newEmployeeManager.split(' ');
-
   const firstName = splitManagerName[0];
   const lastName = splitManagerName[1];
 
   const manager = await Query.getEmployeeId(firstName, lastName);
-  const managerId = manager[0].id;
+  const managerId = manager.length ? manager[0].id : null;
 
   connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) 
     VALUES ("${newEmployeeFirstName}", "${newEmployeeLastName}", ${roleId}, ${managerId});`, function (error) {
