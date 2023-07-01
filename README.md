@@ -1,3 +1,5 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
+
 # Employee Tracker
 
 ## Description:
@@ -9,6 +11,7 @@ Built with Node.js, Inquirer, and MySQL.
 
 The following video shows an example of the application being used from the command line:
 
-[![A video thumbnail shows the command-line employee management application with a play button overlaying the view.](./Assets/12-sql-homework-video-thumbnail.png)](https://2u-20.wistia.com/medias/2lnle7xnpk)
+[Video Demo](https://drive.google.com/file/d/1XF0hYgxERJA1ATB2K1t1t6J_hHePhaju/view?usp=sharing)
 
-[Fullstack Blog Video Submission Guide](https://coding-boot-camp.github.io/full-stack/computer-literacy/video-submission-guide) for additional guidance on creating a video.
+[![screenshot](./images/employee-tracker-screenshot.png "screenshot")](https://drive.google.com/file/d/1XF0hYgxERJA1ATB2K1t1t6J_hHePhaju/view?usp=sharing)
+
