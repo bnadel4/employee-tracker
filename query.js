@@ -93,4 +93,20 @@ Query.addEmployee = async function ({newEmployeeFirstName, newEmployeeLastName, 
   });
 };
 
+Query.updateEmployee = async function ({employeeToUpdate, employeeRoleToUpdate}, roles) {
+  const roleId = roles.find(value => value.title === employeeRoleToUpdate).id;
+
+  const splitEmployeeName = employeeToUpdate.split(' ');
+  const firstName = splitEmployeeName[0];
+  const lastName = splitEmployeeName[1];
+
+  const employee = await Query.getEmployeeId(firstName, lastName);
+  const employeeId = employee[0].id;
+
+  connection.query(`UPDATE employee SET role_id = ${roleId} WHERE id = ${employeeId};`, function (error) {
+    if (error) throw error;
+    console.log(`Updated employees role`);
+  });
+};
+
 module.exports = Query;
