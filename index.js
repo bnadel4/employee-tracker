@@ -1,6 +1,27 @@
 const inquirer = require('inquirer');
 const query = require('./query');
 
+console.log(`
+  
+---------------------------------------------------------------------- 
+
+███████ ███    ███ ██████  ██       ██████  ██    ██ ███████ ███████ 
+██      ████  ████ ██   ██ ██      ██    ██  ██  ██  ██      ██      
+█████   ██ ████ ██ ██████  ██      ██    ██   ████   █████   █████   
+██      ██  ██  ██ ██      ██      ██    ██    ██    ██      ██      
+███████ ██      ██ ██      ███████  ██████     ██    ███████ ███████ 
+                                                                     
+                                                                     
+████████ ██████   █████   ██████ ██   ██ ███████ ██████              
+   ██    ██   ██ ██   ██ ██      ██  ██  ██      ██   ██             
+   ██    ██████  ███████ ██      █████   █████   ██████              
+   ██    ██   ██ ██   ██ ██      ██  ██  ██      ██   ██             
+   ██    ██   ██ ██   ██  ██████ ██   ██ ███████ ██   ██             
+                                                                     
+                                                                     
+---------------------------------------------------------------------- 
+   `);
+
 function runCode() {
   const questions = [
     {
@@ -70,27 +91,44 @@ function runCode() {
         choices: [],
       },
     ];
+
+    const updateEmployee = [
+      {
+        type: 'list',
+        name: 'employeeToUpdate',
+        message: 'Which employee\'s role do you want to update?',
+        choices: [],
+      },
+      {
+        type: 'list',
+        name: 'employeeRoleToUpdate',
+        message: 'Which role do you want to assign the selected employee?',
+        choices: [],
+      },
+    ];
   
   const runQuery = async function (response) {
     switch (response.choice) {
       case 'view all departments':
-      let department = await query.viewDepartment();
-      console.table(department);
+        let department = await query.viewDepartment();
+        console.table(department);
+        runCode();
         break;
       case 'view all roles':
         let role = await query.viewRole();
         console.table(role);
+        runCode();
         break;
       case 'view all employees':
-       let employees = await query.viewEmployee();
+        let employees = await query.viewEmployee();
         console.table(employees);
+        runCode();
         break;
       case 'add a department':
         inquirer.prompt(addDepartmentName)
           .then(async(answers) => {
             query.addDepartment(answers.newDepartmentName);
-            let updatedDepartments = await query.viewDepartment();
-            console.table(updatedDepartments);
+            runCode();
           });
         break;
       case 'add a role':
@@ -99,8 +137,7 @@ function runCode() {
         inquirer.prompt(addRole)
           .then(async(answers) => {
             query.addRole(answers, resultDept);
-            let updatedRoles = await query.viewRole();
-            console.table(updatedRoles);
+            runCode();
           });
         break;
       case 'add an employee':
@@ -113,23 +150,30 @@ function runCode() {
         inquirer.prompt(addEmployee)
           .then(async(answers) => {
             query.addEmployee(answers, roleResult);
-            let updatedEmployees = await query.viewEmployee();
-            console.table(updatedEmployees);
+            runCode();
           });
         break; 
+      case 'update an employee role':
+        let allEmployees = await query.viewEmployee();
+        let roles = await query.viewRole();
+
+        updateEmployee[0].choices = allEmployees.map(result => result.first_name + ' ' + result.last_name);
+        updateEmployee[1].choices = roles.map(result => result.title);
+
+        inquirer.prompt(updateEmployee)
+        .then(async(answers) => {
+          query.updateEmployee(answers, roles);
+          runCode();
+        });
+      break; 
     }
   };
 
-  // add employee function
-  
-  
 
   inquirer.prompt(questions)
     .then((answers) => {
-    ('answers', answers.choice);
-    runQuery(answers);
+      runQuery(answers);
   });
 };
-  
 
 runCode();
